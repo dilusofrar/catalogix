@@ -17,6 +17,34 @@ const IconCheckCircle = (p) => <Icon {...p}><circle cx="12" cy="12" r="9"/><path
 const IconPackageX = (p) => <Icon {...p}><path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5v-9Z"/><path d="M3.8 7.3 12 12l8.2-4.7"/><line x1="12" y1="12" x2="12" y2="21"/></Icon>;
 const IconClipboard = (p) => <Icon {...p}><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/></Icon>;
 const IconLayers = (p) => <Icon {...p}><polygon points="12 3 20 8 12 13 4 8 12 3"/><polyline points="4 13 12 18 20 13"/></Icon>;
+const IconSun = (p) => <Icon {...p}><circle cx="12" cy="12" r="4.5"/><line x1="12" y1="2.5" x2="12" y2="4.5"/><line x1="12" y1="19.5" x2="12" y2="21.5"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="18.4" y1="18.4" x2="19.8" y2="19.8"/><line x1="2.5" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="21.5" y2="12"/><line x1="4.2" y1="19.8" x2="5.6" y2="18.4"/><line x1="18.4" y1="5.6" x2="19.8" y2="4.2"/></Icon>;
+const IconMoon = (p) => <Icon {...p}><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></Icon>;
+
+/* ---------- tema claro/escuro (persistido no navegador do visitante) ---------- */
+const THEME_KEY = "catalogix-theme";
+function readStoredTheme() {
+  try { return localStorage.getItem(THEME_KEY); } catch (e) { return null; }
+}
+function useTheme() {
+  const [theme, setTheme] = useState(() => readStoredTheme());
+  useEffect(() => {
+    try {
+      if (theme) {
+        document.documentElement.setAttribute("data-theme", theme);
+        localStorage.setItem(THEME_KEY, theme);
+      } else {
+        document.documentElement.removeAttribute("data-theme");
+        localStorage.removeItem(THEME_KEY);
+      }
+    } catch (e) { /* localStorage indisponível: tema segue só na sessão atual */ }
+  }, [theme]);
+  const toggle = () => setTheme((prev) => {
+    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const current = prev || (prefersDark ? "dark" : "light");
+    return current === "dark" ? "light" : "dark";
+  });
+  return [theme, toggle];
+}
 
 /* ---------- placeholder de imagem (fallback caso a URL externa falhe) ---------- */
 const FALLBACK_IMG = "data:image/svg+xml;utf8," + encodeURIComponent(
@@ -493,6 +521,7 @@ function FiltersPanel({ category, setCategory, priceMin, priceMax, setPriceMin, 
 
 /* ---------- app principal ---------- */
 function App() {
+  const [theme, toggleTheme] = useTheme();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("Todos");
   const [priceMin, setPriceMin] = useState(MIN_PRICE);
@@ -567,6 +596,10 @@ function App() {
     setCart([]);
   };
 
+  const isDark = theme
+    ? theme === "dark"
+    : !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
   return (
     <div>
       {/* header fixo */}
@@ -605,6 +638,17 @@ function App() {
             </select>
             <IconChevronDown size={14} style={{ position: "absolute", right: 11, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: "var(--text-muted)" }} />
           </div>
+
+          <button type="button" onClick={toggleTheme}
+            aria-label={isDark ? "Mudar para tema claro" : "Mudar para tema escuro"}
+            title={isDark ? "Mudar para tema claro" : "Mudar para tema escuro"}
+            className="icon-btn" style={{
+              width: 38, height: 38, borderRadius: 10, border: "1px solid var(--border)",
+              background: "var(--surface-alt)", color: "var(--text)", cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+            }}>
+            {isDark ? <IconSun size={17} /> : <IconMoon size={17} />}
+          </button>
 
           <button type="button" onClick={() => setCartOpen(true)} aria-label="Abrir carrinho"
             className="icon-btn" style={{
