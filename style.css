@@ -1,0 +1,73 @@
+/* layout: header fixo + sidebar de filtros + grid de produtos; gaveta e modal sobrepostos */
+:root{
+  --bg:#F5F7FA; --surface:#FFFFFF; --surface-alt:#EDF1F6; --border:#DCE3EA;
+  --text:#121B26; --text-muted:#5B6A79; --text-faint:#8B98A6;
+  --primary:#1E3A5F; --primary-dim:#2C4D7A; --primary-ink:#FFFFFF;
+  --accent:#D97706; --accent-ink:#1A1206; --accent-soft:#FDF0DC;
+  --success:#15803D; --success-soft:#E6F6EC;
+  --warning:#B45309; --warning-soft:#FDF0DC;
+  --danger:#B91C1C; --danger-soft:#FBE9E9;
+  --shadow:rgba(20,30,45,.10); --overlay:rgba(12,18,27,.52);
+  --font-display:'Sora',system-ui,sans-serif;
+  --font-body:'IBM Plex Sans',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1620; --surface:#161F2B; --surface-alt:#1D2836; --border:#2B3747;
+    --text:#E8EDF3; --text-muted:#9AA7B5; --text-faint:#6E7B8A;
+    --primary:#6D97C6; --primary-dim:#8AAED9; --primary-ink:#0B1420;
+    --accent:#F0A03A; --accent-ink:#1A1206; --accent-soft:#2C2311;
+    --success:#4ADE80; --success-soft:#143324;
+    --warning:#F0A03A; --warning-soft:#2C2311;
+    --danger:#F87171; --danger-soft:#331818;
+    --shadow:rgba(0,0,0,.45); --overlay:rgba(5,8,13,.65);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1620; --surface:#161F2B; --surface-alt:#1D2836; --border:#2B3747;
+  --text:#E8EDF3; --text-muted:#9AA7B5; --text-faint:#6E7B8A;
+  --primary:#6D97C6; --primary-dim:#8AAED9; --primary-ink:#0B1420;
+  --accent:#F0A03A; --accent-ink:#1A1206; --accent-soft:#2C2311;
+  --success:#4ADE80; --success-soft:#143324;
+  --warning:#F0A03A; --warning-soft:#2C2311;
+  --danger:#F87171; --danger-soft:#331818;
+  --shadow:rgba(0,0,0,.45); --overlay:rgba(5,8,13,.65);
+  color-scheme:dark;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);-webkit-font-smoothing:antialiased;}
+button{font-family:inherit;}
+.gutter{padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px));}
+.nums{font-variant-numeric:tabular-nums;}
+h1,h2,h3,.disp{font-family:var(--font-display);text-wrap:balance;}
+.mono{font-family:var(--font-mono);}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
+.scrim-enter{animation:fade .15s ease-out;}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.slide-enter{animation:slideIn .22s cubic-bezier(.2,.8,.2,1);}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.pop-enter{animation:pop .18s cubic-bezier(.2,.8,.2,1);}
+@keyframes pop{from{opacity:0;transform:scale(.96) translateY(6px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.card-hover{transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;}
+.card-hover:hover{transform:translateY(-3px);box-shadow:0 12px 24px -8px var(--shadow);border-color:var(--primary-dim);}
+.chip{transition:background .15s ease,color .15s ease,border-color .15s ease;}
+.icon-btn{transition:background .15s ease,color .15s ease;}
+@media (prefers-reduced-motion: reduce){
+  .scrim-enter,.slide-enter,.pop-enter,.card-hover,.chip,.icon-btn{animation:none!important;transition:none!important;}
+}
+/* dual price range slider */
+.range-wrap{position:relative;height:28px;display:flex;align-items:center;}
+.range-track{position:absolute;left:0;right:0;height:4px;border-radius:4px;background:var(--border);}
+.range-fill{position:absolute;height:4px;border-radius:4px;background:var(--accent);}
+.range-input{position:absolute;width:100%;margin:0;background:transparent;-webkit-appearance:none;appearance:none;pointer-events:none;}
+.range-input::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;width:16px;height:16px;border-radius:50%;background:var(--surface);border:2.5px solid var(--primary);cursor:pointer;box-shadow:0 1px 3px var(--shadow);margin-top:0;}
+.range-input::-moz-range-thumb{pointer-events:auto;width:16px;height:16px;border-radius:50%;background:var(--surface);border:2.5px solid var(--primary);cursor:pointer;}
+.range-input::-webkit-slider-runnable-track{background:transparent;}
+.range-input::-moz-range-track{background:transparent;}
+input[type=text]:focus-visible,input[type=number]:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.badge-pop{animation:pop .22s cubic-bezier(.3,1.3,.5,1);}
